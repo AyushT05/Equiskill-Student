@@ -1,7 +1,8 @@
 import React from 'react'
 import WelcomeBanner from './_components/WelcomeBanner'
 import CourseList from './_components/CourseList'
-import { auth } from '@clerk/nextjs/dist/types/server';
+import { auth } from "@clerk/nextjs/server";
+
 
 async function Dashboard() {
   
