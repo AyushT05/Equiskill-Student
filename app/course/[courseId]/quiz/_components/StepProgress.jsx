@@ -1,10 +1,10 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import React from "react";
+"use client"
+import { Button } from "@/components/ui/button"
+import React from "react"
 
-function StepProgress({ stepCount, setStepCount, data }) {
-    const router = useRouter(); // Initialize the router
+function StepQuizProgress({ stepCount, setStepCount, data, userAnswers }) {
+    const isLastQuestion = stepCount === data.length - 1
+    const currentAnswer = userAnswers[stepCount]
 
     return (
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 items-center justify-center mt-6">
@@ -13,6 +13,7 @@ function StepProgress({ stepCount, setStepCount, data }) {
                     Previous
                 </Button>
             )}
+            
             <div className="flex flex-1 items-center justify-center gap-2 sm:gap-5">
                 {data?.map((_, index) => (
                     <div
@@ -21,20 +22,22 @@ function StepProgress({ stepCount, setStepCount, data }) {
                     />
                 ))}
             </div>
+
             <Button
                 size="sm"
+                disabled={!currentAnswer && stepCount < data.length}
                 onClick={() => {
                     if (stepCount < data.length - 1) {
-                        setStepCount(stepCount + 1);
+                        setStepCount(stepCount + 1)
                     } else {
-                        router.back(); // Navigate back to the study material page
+                        setStepCount(data.length) // Navigate to results
                     }
                 }}
             >
-                {stepCount < data.length - 1 ? "Next" : "Finish"}
+                {isLastQuestion ? "Finish" : "Next"}
             </Button>
         </div>
-    );
+    )
 }
 
-export default StepProgress;
+export default StepQuizProgress

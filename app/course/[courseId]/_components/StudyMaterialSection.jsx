@@ -26,7 +26,14 @@ function StudyMaterialSection({ courseId, course }) {
             icon: "/quiz.jpg",
             path: '/quiz',
             type: 'quiz',
-        }
+        },
+        {
+            name: 'Question/Answers',
+            desc: "Question/Answers for your preparation",
+            icon: "/qna.jpg",
+            path: '/question',
+            type: 'question',
+        },
     ];
 
     useEffect(() => {
@@ -45,11 +52,18 @@ function StudyMaterialSection({ courseId, course }) {
     return (
         <div className="mt-5">
             <h2 className="font-medium text-xl md:text-2xl mb-4">Your Study Material</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 {MaterialList.map((item, index) => (
-                    <MaterialCardItem key={index} item={item} studyTypeContent={studyTypeContent} course={course} refreshData={GetStudyMaterial} />
+                    <MaterialCardItem
+                        key={index}
+                        item={item}
+                        studyTypeContent={studyTypeContent}
+                        course={course}
+                        refreshData={GetStudyMaterial}
+                    />
                 ))}
             </div>
+
         </div>
     );
 }

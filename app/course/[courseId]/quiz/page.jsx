@@ -2,49 +2,53 @@
 import axios from 'axios'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState, useCallback } from 'react'
-import StepProgress from '../_components/StepProgress'
 import QuizCardItem from './_components/QuizCardItem'
+import ResultsPage from './_components/ResultPage'
+import StepQuizProgress from './_components/StepProgress'
 
 function Quiz() {
     const { courseId } = useParams()
     const [quizData, setQuizData] = useState(null)
     const [quiz, setQuiz] = useState([])
     const [stepCount, setStepCount] = useState(0)
-    const [isLoading, setIsLoading] = useState(true);
-    const [correctAnswer, setCorrectAnswer] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [userAnswers, setUserAnswers] = useState([])
 
     const checkAnswer = useCallback((userAnswer, currentQuestion) => {
-        setCorrectAnswer(userAnswer === currentQuestion?.correct_answer);
-    }, []);
+        setUserAnswers(prev => {
+            const newAnswers = [...prev]
+            newAnswers[stepCount] = {
+                userAnswer,
+                correctAnswer: currentQuestion.answer,
+                explanation: currentQuestion.explanation,
+                isCorrect: userAnswer === currentQuestion.answer
+            }
+            return newAnswers
+        })
+    }, [stepCount])
 
     useEffect(() => {
         const getQuiz = async () => {
-            setIsLoading(true);
+            setIsLoading(true)
             try {
                 const result = await axios.post('/api/study-type', {
                     courseId: courseId,
                     studyType: 'Quizzes'
-                });
-
-                setQuizData(result.data);
-                setQuiz(result.data.content);
-
+                })
+                setQuizData(result.data)
+                setQuiz(result.data.content)
+                setUserAnswers(new Array(result.data.content.length).fill(null))
             } catch (error) {
-                console.error("Error fetching quiz:", error);
+                console.error("Error fetching quiz:", error)
             } finally {
-                setIsLoading(false);
+                setIsLoading(false)
             }
-        };
-
-        getQuiz();
-    }, [courseId]);
-
-    useEffect(() => {
-        setCorrectAnswer(null);
-    }, [stepCount]);
+        }
+        getQuiz()
+    }, [courseId])
 
     if (isLoading) {
-        return <div className="text-center text-lg">Loading quiz...</div>;
+        return <div className="text-center text-lg">Loading quiz...</div>
     }
 
     return (
@@ -52,31 +56,32 @@ function Quiz() {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold border-b-2 border-gray-300 py-4 mb-6 text-center">
                 Quiz
             </h2>
-            <StepProgress data={quiz} stepCount={stepCount} setStepCount={setStepCount} />
-
-            {quiz?.length > 0 && quiz[stepCount] && (
-                <QuizCardItem
-                    quiz={quiz[stepCount]}
-                    userSelectedOption={(v) => checkAnswer(v, quiz[stepCount])}
+            
+            {stepCount < quiz.length ? (
+                <>
+                    <StepQuizProgress 
+                        data={quiz} 
+                        stepCount={stepCount} 
+                        setStepCount={setStepCount}
+                        userAnswers={userAnswers}
+                    />
+                    
+                    {quiz[stepCount] && (
+                        <QuizCardItem
+                            quiz={quiz[stepCount]}
+                            userSelectedOption={(v) => checkAnswer(v, quiz[stepCount])}
+                            isOptionDisabled={userAnswers[stepCount] !== null}
+                        />
+                    )}
+                </>
+            ) : (
+                <ResultsPage 
+                    userAnswers={userAnswers}
+                    quiz={quiz}
                 />
             )}
-
-            {/* Answer Feedback */}
-            {correctAnswer !== null && (
-                <div className={`p-4 mt-6 text-center rounded-lg shadow-md transition-all duration-300 
-                    ${correctAnswer ? "bg-green-100 border-l-4 border-green-500 text-green-700" : "bg-red-100 border-l-4 border-red-500 text-red-700"}`}>
-                    <h3 className="text-xl sm:text-2xl font-bold">
-                        {correctAnswer ? "Correct ✅" : "Incorrect ❌"}
-                    </h3>
-                    {!correctAnswer && (
-                        <p className="text-lg mt-2">
-                            The correct answer is: <span className="font-semibold">{quiz[stepCount]?.correct_answer}</span>
-                        </p>
-                    )}
-                </div>
-            )}
         </div>
-    );
+    )
 }
 
-export default Quiz;
+export default Quiz

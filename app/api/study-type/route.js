@@ -10,26 +10,25 @@ export async function POST(req) {
         const notes = await db.select().from(CHAPTER_NOTES_TABLE)
             .where(eq(CHAPTER_NOTES_TABLE?.courseId, courseId))
 
-        const contentList=await db.select().from(STUDY_TYPE_CONTENT_TABLE)
-        .where(eq(STUDY_TYPE_CONTENT_TABLE?.courseId, courseId))    
+        const contentList = await db.select().from(STUDY_TYPE_CONTENT_TABLE)
+            .where(eq(STUDY_TYPE_CONTENT_TABLE?.courseId, courseId))
 
 
 
 
         const result = {
             notes: notes,
-            flashCard: contentList?.find(item=>item.type=='FlashCard'),
-            quiz: contentList?.find(item=>item.type=='Quiz'),
-            qa: contentList?.find(item=>item.type=='QA')
+            flashCard: contentList?.find(item => item.type == 'FlashCard'),
+            quiz: contentList?.find(item => item.type == 'Quiz'),
+            qa: contentList?.find(item => item.type == 'QA')
         }
         console.log("results" + result)
         return NextResponse.json(result);
     }
-    else if(studyType=='notes')
-    {
+    else if (studyType == 'notes') {
         const notes = await db.select().from(CHAPTER_NOTES_TABLE)
             .where(eq(CHAPTER_NOTES_TABLE?.courseId, courseId))
-            return NextResponse.json(notes);
+        return NextResponse.json(notes);
     }
     else {
         const result = await db.select().from(STUDY_TYPE_CONTENT_TABLE)

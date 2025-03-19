@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1742234289491,
+      "tag": "0000_groovy_ken_ellis",
+      "breakpoints": true
+    }
+  ]
+}

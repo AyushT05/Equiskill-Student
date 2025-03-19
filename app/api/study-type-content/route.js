@@ -6,7 +6,9 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
     const {chapters,courseId,type}=await req.json();
     const PROMPT=type=='Flashcard'?'Generate the flashcard on topic: '+chapters+' in JSON format with front back content, Maximum 15':
-    'Generate Quiz on topic:'+chapters+' with Question and Options along with correct answer in JSON format, (Max 10)';
+    type=='Quizzes'?'Generate Quiz on topic:'+chapters+' with Question and Options with correct answer along with detailed explanation for the answer in JSON format, (Max 10)':
+    type=='Question/Answers'?'Generate a question bank containing questions and detailed answers on the topic'+chapters+' in JSON format with a maximum of 10 questions':
+    (()=>{throw new Error(`Invalid study type: ${type}`)})()
 
     const result=await db.insert(STUDY_TYPE_CONTENT_TABLE).values({
         courseId:courseId,

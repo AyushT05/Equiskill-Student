@@ -54,7 +54,7 @@ export const GenerateNotes = inngest.createFunction(
       let index = 0;
       for (const chapter of chapters) { // Use a standard for...of loop to avoid issues with async callbacks in forEach
         console.log("chapter: " + JSON.stringify(chapter))
-        const PROMPT=`Generate beautiful exam material detailed content for the chapter, make sure to include all topic points in the content and make sure to give the output in beautiful HTML format that is visually appealing to see(Use emojis to make it look even more appealing). (Do not Add HTMLK, Head, Body, title tag). Put the response HTML string in a dictionary with a field called "html_content" .The chapter is: ${JSON.stringify(chapter)}`        
+        const PROMPT = `Generate beautiful exam material for the chapters:${JSON.stringify(chapter)}. Create the notes by beautifully designing it and use emojis wherever necessary. Make sure to include all topic points in the content. Also make sure to generate the content in PURE HTML FORMAT (Do not include HTMLKL,Head,Title,and Body Tag `
         console.log("Prompt: " + PROMPT)
         const result = await GenerateNotesModel.sendMessage(PROMPT);
 

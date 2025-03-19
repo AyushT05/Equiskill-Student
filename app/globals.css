@@ -70,3 +70,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+pre[class*="language-"] {
+  @apply p-4 rounded-md overflow-x-auto text-base;
+  tab-size: 2;
+}
+
+code[class*="language-"] {
+  @apply font-mono;
+}
+

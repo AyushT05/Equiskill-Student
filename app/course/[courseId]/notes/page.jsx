@@ -34,9 +34,9 @@ function ViewNotes() {
             {/* Step Progress Bar */}
             <div className='flex items-center gap-3 sm:gap-5 justify-center'>
                 {stepCount !== 0 && (
-                    <Button 
-                        variant='outline' 
-                        size='sm' 
+                    <Button
+                        variant='outline'
+                        size='sm'
                         onClick={() => { setDirection(-1); setStepCount(stepCount - 1); }}
                     >
                         Previous
@@ -47,15 +47,15 @@ function ViewNotes() {
                     {Notes?.map((_, index) => (
                         <div
                             key={index}
-                            className={`h-2 rounded-full transition-all duration-300
+                            className={`h-2 rounded-full transition-all duration-300 
                             ${index < stepCount ? 'bg-primary w-6 sm:w-10' : 'bg-gray-300 w-4 sm:w-6'}`}
                         />
                     ))}
                 </div>
 
                 {stepCount < Notes.length && (
-                    <Button 
-                        size="sm" 
+                    <Button
+                        size="sm"
                         onClick={() => { setDirection(1); setStepCount(stepCount + 1); }}
                     >
                         Next
@@ -73,9 +73,9 @@ function ViewNotes() {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: direction > 0 ? -50 : 50 }} // Moves out in opposite direction
                             transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="bg-white shadow-md rounded-lg p-4 sm:p-6 leading-relaxed 
+                            className="bg-white shadow-md rounded-lg leading-relaxed 
                                        sm:max-w-full max-w-md mx-auto text-justify text-base sm:text-lg"
-                            dangerouslySetInnerHTML={{ __html: (Notes[stepCount]?.notes).replace("```html"," ").replace("```"," ") }}
+                            dangerouslySetInnerHTML={{ __html: (Notes[stepCount]?.notes).replace("```html", "").replace("", " ") }}
                         />
                     )}
                 </AnimatePresence>
@@ -89,8 +89,8 @@ function ViewNotes() {
                         className='flex flex-col items-center gap-4 mt-10'
                     >
                         <h2 className="text-xl sm:text-2xl font-semibold text-gray-700">End of Notes 🎉</h2>
-                        <Button 
-                            onClick={() => route.back()} 
+                        <Button
+                            onClick={() => route.back()}
                             className="transition-all duration-300 hover:scale-105"
                         >
                             Go back to Course Page
