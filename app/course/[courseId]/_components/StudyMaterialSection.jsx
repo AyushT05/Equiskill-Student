@@ -11,18 +11,18 @@ function StudyMaterialSection({ courseId, course }) {
             desc: "These are the notes for your preparation",
             icon: "/notes.jpg",
             path: '/notes',
-            type: 'notes'
+            type: 'notes',
         },
         {
             name: 'Flashcard',
             desc: "These are the Flashcards for quick revision",
             icon: "/flashcards.png",
             path: '/flashCard',
-            type: 'flashCard'
+            type: 'flashCard',
         },
         {
             name: 'Quizzes',
-            desc: "Quizzes for your testing your preparation",
+            desc: "Quizzes for testing your preparation",
             icon: "/quiz.jpg",
             path: '/quiz',
             type: 'quiz',
@@ -41,12 +41,29 @@ function StudyMaterialSection({ courseId, course }) {
     }, []);
 
     const GetStudyMaterial = async () => {
-        const result = await axios.post('/api/study-type', {
-            courseId: courseId,
-            studyType: 'ALL',
-        });
-        console.log(result.data);
-        setStudyTypeContent(result.data);
+        try {
+            const result = await axios.post('/api/study-type', {
+                courseId: courseId,
+                studyType: 'ALL',
+            });
+            console.log(result.data);
+            setStudyTypeContent(result.data); // Update state with fresh data
+        } catch (error) {
+            console.error("Error fetching study material:", error);
+        }
+    };
+
+
+    const refreshData = async (forceRefresh = false) => {
+        if (forceRefresh) {
+            try {
+                const response = await axios.post('/api/study-type', { courseId });
+                setStudyTypeContent(response.data); // Update state with new data
+                console.log("Study material refreshed:", response.data);
+            } catch (error) {
+                console.error("Error fetching study type content:", error);
+            }
+        }
     };
 
     return (
@@ -59,7 +76,7 @@ function StudyMaterialSection({ courseId, course }) {
                         item={item}
                         studyTypeContent={studyTypeContent}
                         course={course}
-                        refreshData={GetStudyMaterial}
+                        refreshData={GetStudyMaterial} // Pass refresh function here
                     />
                 ))}
             </div>

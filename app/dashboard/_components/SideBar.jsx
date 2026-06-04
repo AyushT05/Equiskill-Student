@@ -36,13 +36,13 @@ function SideBar() {
 
       <div className="mt-5 flex-grow">
         {MenuList.map((menu, index) => (
-          <div 
-            key={index} 
-            className={`flex gap-3 items-center p-2 rounded-lg cursor-pointer mt-3
-            ${path === menu.path ? 'bg-slate-200' : 'hover:bg-slate-100'}`}>
-            <menu.icon className="w-5 h-5" />
-            <h2 className="text-sm md:text-base">{menu.name}</h2>
-          </div>
+          <Link key={index} href={menu.path}>
+            <div className={`flex gap-3 items-center p-2 rounded-lg cursor-pointer mt-3
+      ${path === menu.path ? 'bg-slate-200' : 'hover:bg-slate-100'}`}>
+              <menu.icon className="w-5 h-5" />
+              <h2 className="text-sm md:text-base">{menu.name}</h2>
+            </div>
+          </Link>
         ))}
       </div>
 
