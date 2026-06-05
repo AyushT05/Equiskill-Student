@@ -27,7 +27,6 @@ export const CreateNewUser = inngest.createFunction(
     { id: "create-user", triggers: [{ event: "user.create" }] },
     async ({ event, step }) => {
         const { user } = event.data;
-
         const result = await step.run(
             "Check User and create new if Not in DB",
             async () => {
@@ -35,7 +34,6 @@ export const CreateNewUser = inngest.createFunction(
                     .select()
                     .from(USER_TABLE)
                     .where(eq(USER_TABLE.email, user.primaryEmailAddress.emailAddress));
-
                 if (existingUser.length === 0) {
                     const newUser = await db
                         .insert(USER_TABLE)
@@ -46,11 +44,9 @@ export const CreateNewUser = inngest.createFunction(
                         .returning({ id: USER_TABLE.id });
                     return newUser;
                 }
-
                 return existingUser;
             }
         );
-
         return "Success";
     }
 );
@@ -59,25 +55,22 @@ export const GenerateNotes = inngest.createFunction(
     { id: "generate-course", triggers: [{ event: "notes.generate" }] },
     async ({ event, step }) => {
         const { course } = event.data;
+        const chapters = course?.courseLayout?.chapters ?? [];
 
-        await step.run("Generate Chapter Notes", async () => {
-            const chapters = course?.courseLayout?.chapters ?? [];
-
-            for (let index = 0; index < chapters.length; index++) {
-                const chapter = chapters[index];
+        // Each chapter gets its own step and its own 10s window
+        for (let index = 0; index < chapters.length; index++) {
+            const chapter = chapters[index];
+            await step.run(`Generate Notes for Chapter ${index}`, async () => {
                 console.log("Generating notes for chapter:", chapter.chapter_title);
-
                 const htmlContent = await generateChapterNotes(chapter);
-
                 await db.insert(CHAPTER_NOTES_TABLE).values({
                     chapterId: index,
                     courseId: course?.courseId,
                     notes: htmlContent,
                 });
-            }
-
-            return "Completed";
-        });
+                return "Completed";
+            });
+        }
 
         await step.run("Update Course Status to Ready", async () => {
             await db
@@ -93,7 +86,6 @@ export const GenerateStudyTypeContent = inngest.createFunction(
     { id: "generate-study-type-content", triggers: [{ event: "studyType.content" }] },
     async ({ event, step }) => {
         const { studyType, chapters, courseId, recordId } = event.data;
-
         const aiResult = await step.run("Generate content using AI", async () => {
             if (studyType === STUDY_TYPES.FLASHCARD) {
                 return await generateFlashcards(chapters);
@@ -105,7 +97,6 @@ export const GenerateStudyTypeContent = inngest.createFunction(
                 throw new Error(`Invalid study type: ${studyType}`);
             }
         });
-
         await step.run("Save Result to DB", async () => {
             await db
                 .update(STUDY_TYPE_CONTENT_TABLE)
