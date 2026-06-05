@@ -393,8 +393,11 @@ function ViewNotes() {
 
             const blob = new Blob([fullHtml], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
-            const win = window.open(url, '_blank');
-            // fallback: if onload doesn't fire reliably, the script inside handles printing
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'course-notes.html';
+            a.click();
+            URL.revokeObjectURL(url);
         } catch (err) {
             console.error('PDF download error:', err);
         } finally {
